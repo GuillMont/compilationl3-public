@@ -3,13 +3,13 @@ Package sc;
 Helpers
 
 lettre = [['a' .. 'z'] + ['A' .. 'Z']];
-number = ['0'..'9'];
+number = ['0'..'9']+;
 
 
 Tokens
 
 blank = (' ' | 13 | 10)+;
-number = ['0'..'9'];
+number = ['0'..'9']+;
 lettre = [['a'..'z'] + ['A' .. 'Z']];
 plus = '+';
 minus = '-';
@@ -36,6 +36,8 @@ egal = '=';
 inf = '<';
 ecrire = 'ecrire';
 lire = 'lire';
+identif = lettre*;
+
 
 
 commentaire = '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
@@ -46,10 +48,6 @@ blank, commentaire;
 
 Productions
 
-entier = {multi} number entier | {mono} number;
-identif = {identif} entier identif | {identif2} lettre identif | {blank};
-
-
 exp = {ou} exp ou and | {et} and;
 and = {et} and et log | {logique} log;
 log = {egal} log egal add | {inf} log inf add | {add} add;
@@ -58,9 +56,8 @@ factor = {mult} factor mult no | {div} factor div no | {no} no;
 no = {no} non fin | {oui} fin;
 fin = {exp} lpar exp rpar | {entier} entier | {appel} appel | {identif} identif;
 
-lprim = {lprim} exp lprim | {blank} ;
-listeexpression = {listeexpression} exp lprim | {blank};
-appel =  {appel} identif lpar listeexpression rpar pointvirgule;
+entier = {multi} number entier | {mono} number;
+appel =  {appel} identif lpar exp rpar pointvirgule;
 
 
 instruction = {a} affectation | {sa} sialors | {sisi} sisinon | {tq} instrtantque | {r} retourne | {fs} fonctionsimple | {fp} fonctionpredefinie;
@@ -71,4 +68,6 @@ sisinon = si exp alors laccolade instruction raccolade sinon blocinstr;
 instrtantque = {tq} tantque exp faire blocinstr;
 retourne = {r} retour exp pointvirgule;
 fonctionsimple = {fs} appel;
-fonctionpredefinie = {ecrire} ecrire lpar exp rpar | {lire} identif egal lire lpar rpar;
+fonctionpredefinie = {ecrire} ecrire lpar exp rpar pointvirgule | {lire} identif egal lire lpar rpar pointvirgule;
+
+
